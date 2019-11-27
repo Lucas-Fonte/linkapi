@@ -1,4 +1,3 @@
-import convert from 'xml-js';
 import Opportunity from '../models/Oportunity';
 import bling_api from '../../services/bling_api';
 import pipedrive_api from '../../services/pipedrive_api';
@@ -16,74 +15,74 @@ class SalesController {
       })
     );
 
-    await deals.map(({ title, status, value, won_time }) =>
-      Opportunity.create({ title, status, value, won_time })
-    );
+    const result = await deals.map(({ title, status, value, won_time }) => {
+      Opportunity.create({ title, status, value, won_time });
+      bling_api.post(
+        `pedido/json/?apikey=${process.env.BLING_KEY}&xml=
+        
+        ${encodeURI(`<?xml version="1.0" encoding="utf-8"?>
+        <pedido>
+            <cliente>
+                <nome>${title}</nome>
+                <tipoPessoa>J</tipoPessoa>
+                <endereco>Rua Visconde de São Gabriel</endereco>
+                <cpf_cnpj>00000000000000</cpf_cnpj>
+                <ie_rg>3067663000</ie_rg>
+                <numero>392</numero>
+                <complemento>Sala 54</complemento>
+                <bairro>Cidade Alta</bairro>
+                <cep>95.700-000</cep>
+                <cidade>Bento Gonçalves</cidade>
+                <uf>RS</uf>
+                <fone>5481153376</fone>
+                <email>teste@teste.com.br</email>
+            </cliente>
+            <transporte>
+                <transportadora>Transportadora XYZ</transportadora>
+                <tipo_frete>R</tipo_frete>
+                <servico_correios>SEDEX - CONTRATO</servico_correios>
+                <dados_etiqueta>
+                    <nome>Endereço de entrega</nome>
+                    <endereco>Rua Visconde de São Gabriel</endereco>
+                    <numero>392</numero>
+                    <complemento>Sala 59</complemento>
+                    <municipio>Bento Gonçalves</municipio>
+                    <uf>RS</uf>
+                    <cep>95.700-000</cep>
+                    <bairro>Cidade Alta</bairro>
+                </dados_etiqueta>
+                <volumes>
+                    <volume>
+                        <servico>SEDEX - CONTRATO</servico>
+                        <codigoRastreamento></codigoRastreamento>
+                    </volume>
+                </volumes>
+            </transporte>
+            <itens>
+                <item>
+                    <codigo>001</codigo>
+                    <descricao>Caneta 001</descricao>
+                    <un>Pç</un>
+                    <qtde>10</qtde>
+                    <vlr_unit>1.68</vlr_unit>
+                </item>
+            </itens>
+            <parcelas>
+                <parcela>
+                    <data>01/09/2009</data>
+                    <vlr>${value}</vlr>
+                    <obs>Teste obs 1</obs>
+                </parcela>
+            </parcelas>
+            <vlr_frete>15</vlr_frete>
+            <vlr_desconto>10</vlr_desconto>
+            <obs>Testando o campo observações do pedido</obs>
+            <obs_internas>Testando o campo observações internas do pedido</obs_internas>
+      </pedido>`)}`
+      );
+    });
 
-    const optionsToXML = { compact: true, ignoreComment: true, spaces: 4 };
-    const xml = convert.js2xml(
-      {
-        pedido: {
-          cliente: {
-            nome: 'Organisys Software',
-            tipoPessoa: 'J',
-            endereco: 'Rua Visconde de São Gabriel',
-            cpf_cnpj: '00000000000000',
-            ie_rg: '3067663000',
-            numero: '392',
-            complemento: 'Sala 54',
-            bairro: 'Cidade Alta',
-            cep: '95.700-000',
-            cidade: 'Bento Gonçalves',
-            uf: 'RS',
-            fone: '5481153376',
-            email: 'teste@teste.com.br'
-          },
-          transporte: {
-            transportadora: 'Transportadora XYZ',
-            tipo_frete: 'R',
-            servico_correios: 'SEDEX - CONTRATO',
-            dados_etiqueta: {
-              nome: 'Endereço de entrega',
-              endereco: 'Rua Visconde de São Gabriel',
-              numero: '392',
-              complemento: 'Sala 59',
-              municipio: 'Bento Gonçalves',
-              uf: 'RS',
-              cep: '95.700-000',
-              bairro: 'Cidade Alta'
-            },
-            volumes: [
-              {
-                servico: 'SEDEX - CONTRATO',
-                codigoRastreamento: []
-              }
-            ]
-          },
-          itens: [
-            {
-              codigo: '001',
-              descricao: 'Caneta 001',
-              un: 'Pç',
-              qtde: '10',
-              vlr_unit: '1.68'
-            }
-          ],
-          vlr_frete: '15',
-          vlr_desconto: '10',
-          obs: 'Testando o campo observações do pedido',
-          obs_internas: 'Testando o campo observações internas do pedido'
-        }
-      },
-
-      optionsToXML
-    );
-
-    const dealsToBling = await bling_api.post(
-      `pedido/json/?apikey=${process.env.BLING_KEY}&xml='<'?xml version="1.0" encoding="UTF-8"?>${xml}'`
-    );
-
-    return res.json(deals);
+    return res.json(result);
   }
 }
 
