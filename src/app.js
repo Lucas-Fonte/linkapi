@@ -1,9 +1,13 @@
-import './bootstrap';
+import 'dotenv/config';
 
+import mongoose from 'mongoose';
 import express from 'express';
 import routes from './routes';
 
-import './database';
+mongoose.connect(process.env.DB_MONGO, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 
 class App {
   constructor() {
