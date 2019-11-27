@@ -57,10 +57,6 @@ class SalesController {
               {
                 servico: 'SEDEX - CONTRATO',
                 codigoRastreamento: []
-              },
-              {
-                servico: 'PAC - CONTRATO',
-                codigoRastreamento: []
               }
             ]
           },
@@ -71,37 +67,6 @@ class SalesController {
               un: 'Pç',
               qtde: '10',
               vlr_unit: '1.68'
-            },
-            {
-              codigo: '002',
-              descricao: 'Caderno 002',
-              un: 'Un',
-              qtde: '3',
-              vlr_unit: '3.75'
-            },
-            {
-              codigo: '003',
-              descricao: 'Teclado 003',
-              un: 'Cx',
-              qtde: '7',
-              vlr_unit: '18.65'
-            }
-          ],
-          parcelas: [
-            {
-              data: '01/09/2009',
-              vlr: '100',
-              obs: 'Teste obs 1'
-            },
-            {
-              data: '06/09/2009',
-              vlr: '50',
-              obs: []
-            },
-            {
-              data: '11/09/2009',
-              vlr: '50',
-              obs: 'Teste obs 3'
             }
           ],
           vlr_frete: '15',
