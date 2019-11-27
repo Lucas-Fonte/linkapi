@@ -16,7 +16,12 @@ class SalesController {
     );
 
     const result = await deals.map(({ title, status, value, won_time }) => {
-      Opportunity.create({ title, status, value, won_time });
+      Opportunity.create({
+        title,
+        status,
+        value,
+        won_time
+      });
       bling_api.post(
         `pedido/json/?apikey=${process.env.BLING_KEY}&xml=
         
@@ -61,7 +66,7 @@ class SalesController {
             <itens>
                 <item>
                     <codigo>001</codigo>
-                    <descricao>Caneta 001</descricao>
+                    <descricao>Caneta 001 Teste</descricao>
                     <un>Pç</un>
                     <qtde>10</qtde>
                     <vlr_unit>1.68</vlr_unit>
@@ -82,7 +87,7 @@ class SalesController {
       );
     });
 
-    return res.json(result);
+    return res.json({ deals, status: result ? 'sucess' : 'fail' });
   }
 }
 
